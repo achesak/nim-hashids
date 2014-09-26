@@ -55,12 +55,12 @@ proc createHashid*(salt : string, minHashLength : int, alphabet : string): Hashi
     for i in 0..high(h.seps):
         var j : int = h.alphabet.find(h.seps[i])
         if j == -1:
-            h.seps = h.seps[0..i-1] & " " & h.seps[i..high(h.seps)]                          ## POSSIBLE BUGFIX: MIGHT NEED TO BE i OR i+1
+            h.seps = h.seps[0..i-1] & " " & h.seps[i..high(h.seps)]
         else:
-            h.alphabet = h.alphabet[0..j-1] & " " & h.alphabet[j..high(h.alphabet)]          ## SAME HERE
+            h.alphabet = h.alphabet[0..j-1] & " " & h.alphabet[j..high(h.alphabet)]
     
     var re1 : TRegex = re("\\s+")
-    h.alphabet = h.alphabet.replace(re1, "")                                                 ## POSSIBLE BUGFIX: DOES THIS REPLACE ALL?
+    h.alphabet = h.alphabet.replace(re1, "")
     h.seps = h.seps.replace(re1, "")
     
     if h.seps == "" or ((len(h.alphabet) / len(h.seps)) > sepDiv):
