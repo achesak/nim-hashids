@@ -1,4 +1,4 @@
-# Nimrod module to implement hashids (http://www.hashids.org/).
+# Nim module to implement hashids (http://www.hashids.org/).
 
 # Written by Adam Chesak.
 # Released under the MIT open source license.
@@ -59,7 +59,7 @@ proc createHashid*(salt : string, minHashLength : int, alphabet : string): Hashi
         else:
             h.alphabet = h.alphabet[0..j-1] & " " & h.alphabet[j..high(h.alphabet)]
     
-    var re1 : TRegex = re("\\s+")
+    var re1 : Regex = re("\\s+")
     h.alphabet = h.alphabet.replace(re1, "")
     h.seps = h.seps.replace(re1, "")
     
