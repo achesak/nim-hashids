@@ -1,4 +1,4 @@
-# Nim module to implement hashids (http://www.hashids.org/).
+# Nim module to implement Hashids (http://www.hashids.org/).
 
 # Written by Adam Chesak.
 # Released under the MIT open source license.
@@ -11,13 +11,14 @@ import math
 
 
 const defaultAlphabet* : string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+const defaultHashLength* : int = 0
 const minAlphabetLength* : int = 16
 const sepDiv : float = 3.5
 const guardDiv : float = 12.0
 
 
 type
-    HashidRef* = ref Hashid
+    Hashids* = ref Hashid
     Hashid* = object
         salt : string
         minHashLength : int
@@ -26,18 +27,18 @@ type
         guards : string
 
 
-proc encode(hashid : HashidRef, numbers : seq[int]): string
-proc decode(hashid : HashidRef, hash : string, alphabet2 : string): seq[int]
+proc encodeInternal(hashid : Hashids, numbers : seq[int]): string
+proc decodeInternal(hashid : Hashids, hash : string, alphabet2 : string): seq[int]
 proc consistentShuffle(alphabet2 : string, salt : string): string
 proc hash(input2 : int, alphabet : string): string
 proc unhash(input : string, alphabet : string): int
 
 
-proc createHashid*(salt : string, minHashLength : int, alphabet : string): HashidRef = 
-    ## Creates and returns a new ``HashidRef`` object with the specified salt, minimum hash length,
+proc createHashids*(salt : string, minHashLength : int, alphabet : string): Hashids = 
+    ## Creates and returns a new ``Hashids`` object with the specified salt, minimum hash length,
     ## and alphabet.
     
-    var h : HashidRef = HashidRef(salt: salt, seps : "cfhistuCFHISTU")
+    var h : Hashids = Hashids(salt: salt, seps : "cfhistuCFHISTU")
     if minHashLength < 0:
         h.minHashLength = 0
     else:
@@ -89,29 +90,50 @@ proc createHashid*(salt : string, minHashLength : int, alphabet : string): Hashi
     return h
 
 
-proc encrypt*(hashid : HashidRef, numbers : seq[int]): string = 
-    ## Encrypts the specified numbers and returns the encrypted
+proc createHashids*(salt : string, minHashLength : int): Hashids = 
+    ## Creates and returns a new ``Hashids`` object with the specified salt, minimum hash length,
+    ## and the default alphabet.
+    
+    return createHashids(salt, minHashLength, defaultAlphabet)
+
+
+proc createHashids*(salt : string): Hashids = 
+    ## Creates and returns a new ``Hashids`` object with the specified salt and the default hash
+    ## length and alphabet.
+    
+    return createHashids(salt, 0, defaultAlphabet)
+
+
+proc createHashids*(): Hashids = 
+    ## Creates and returns a new ``Hashids`` object with an empty string salt and the default hash
+    ## length and alphabet.
+    
+    return createHashids("", 0, defaultAlphabet)
+
+
+proc encode*(hashid : Hashids, numbers : seq[int]): string = 
+    ## Encodes the specified numbers and returns the encoded
     ## string.
     
     var retval : string = ""
     if len(numbers) == 0:
         return retval
-    return hashid.encode(numbers)
+    return hashid.encodeInternal(numbers)
 
 
-proc decrypt*(hashid : HashidRef, hash : string): seq[int] = 
-    ## Decrypts the the encrypted ``hash`` parameter and returns a 
-    ## sequence containing the decrypted numbers.
+proc decode*(hashid : Hashids, hash : string): seq[int] = 
+    ## Decodes the the encrypted ``hash`` parameter and returns a 
+    ## sequence containing the decoded numbers.
     
     var ret : seq[int] = @[]
     
     if hash == "":
         return ret
     
-    return hashid.decode(hash, hashid.alphabet)
+    return hashid.decodeInternal(hash, hashid.alphabet)
 
 
-proc encode(hashid : HashidRef, numbers : seq[int]): string = 
+proc encodeInternal(hashid : Hashids, numbers : seq[int]): string = 
     ## Encodes the numbers. Internal proc.
     
     var numberHashInt : int = 0
@@ -166,7 +188,7 @@ proc encode(hashid : HashidRef, numbers : seq[int]): string =
     return retStr
 
 
-proc decode(hashid : HashidRef, hash : string, alphabet2 : string): seq[int] = 
+proc decodeInternal(hashid : Hashids, hash : string, alphabet2 : string): seq[int] = 
     ## Decodes the hash. Internal proc.
     
     var alphabet : string = alphabet2
