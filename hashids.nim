@@ -18,8 +18,7 @@ const guardDiv : float = 12.0
 
 
 type
-    Hashids* = ref Hashid
-    Hashid* = object
+    Hashids* = ref object
         salt : string
         minHashLength : int
         alphabet : string
@@ -229,7 +228,6 @@ proc consistentShuffle(alphabet2 : string, salt : string): string =
     if len(salt) <= 0:
         return alphabet
     
-    var arr : string = alphabet
     var ascVal : int
     var j : int
     var temp : string
