@@ -1,5 +1,7 @@
 import unittest
 
+import ../hashids
+
 
 suite "bad input":
 
@@ -7,11 +9,11 @@ suite "bad input":
         const hashids: Hashids = createHashids()
 
     test "raises error when small alphabet":
-        expect HashidsAlphabetException:
+        expect HashidsException:
             discard createHashids("", 0, "1234567890")
 
     test "raises error when alphabet has spaces":
-        expect HashidsAlphabetException:
+        expect HashidsException:
             discard createHashids("", 0, "a cdefghijklmnopqrstuvwxyz")
 
     test "returns empty string when encoding empty seq":

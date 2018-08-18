@@ -1,10 +1,10 @@
-proc seqsEqual(expected: seq[int], actual: seq[int]): boolean = 
+proc seqsEqual(expected: seq[int], actual: seq[int]): bool = 
     if len(expected) != len(actual):
         return false
     for val in expected:
-        if val not in actual:
+        if not val in actual:
             return false
     for val in actual:
-        if val not in expected:
+        if not val in expected:
             return false
     return true

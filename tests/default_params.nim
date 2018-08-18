@@ -3,6 +3,8 @@ import unittest
 
 import test_helper
 
+import ../hashids
+
 
 const map = {
     "gY": @[0],

@@ -25,6 +25,8 @@ type
         seps : string
         guards : string
 
+    HashidsException* = object of Exception
+
 
 proc encodeInternal(hashid : Hashids, numbers : seq[int]): string
 proc decodeInternal(hashid : Hashids, hash : string, alphabet2 : string): seq[int]
@@ -49,8 +51,11 @@ proc createHashids*(salt : string, minHashLength : int, alphabet : string): Hash
             uniqueAlphabet &= $alphabet[i]
     h.alphabet = uniqueAlphabet
     
-    doAssert(len(h.alphabet) >= minAlphabetLength, "alphabet must contain at least " & intToStr(minAlphabetLength) & " unique characters")
-    doAssert(not h.alphabet.contains(" "), "alphabet cannot contain spaces")
+    if len(h.alphabet) < minAlphabetLength:
+        raise newException(HashidsException, "alphabet must contain at least " & intToStr(minAlphabetLength) & " unique characters")
+
+    if alphabet.contains(" "):
+        raise newException(HashidsException, "alphabet cannot contain spaces")
     
     for i in 0..high(h.seps):
         var j : int = h.alphabet.find(h.seps[i])
