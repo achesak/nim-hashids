@@ -35,7 +35,7 @@ proc decode*(hashids: Hashids, hash: string): seq[int]
 
 
 proc checkNumberValidity(numbers: seq[int]): bool =
-    if isNil(numbers) or len(numbers) == 0:
+    if len(numbers) == 0:
         return false
     for number in numbers:
         if number < 0:
@@ -43,7 +43,7 @@ proc checkNumberValidity(numbers: seq[int]): bool =
     return true
 
 
-proc splitEveryChar(str: string): seq[string] = 
+proc splitEveryChar(str: string): seq[string] =
     var splitStr: seq[string] = @[]
     for character in str:
         splitStr.add($character)
@@ -230,30 +230,30 @@ proc createHashids*(salt: string, minHashLength: int, hashidsAlphabet: string): 
     return hashids
 
 
-proc createHashids*(salt: string, minHashLength: int): Hashids = 
+proc createHashids*(salt: string, minHashLength: int): Hashids =
     ## Creates and returns a new ``Hashids`` object with the specified salt, minimum hash length,
     ## and the default alphabet.
-    
+
     return createHashids(salt, minHashLength, defaultAlphabet)
 
 
-proc createHashids*(salt: string): Hashids = 
+proc createHashids*(salt: string): Hashids =
     ## Creates and returns a new ``Hashids`` object with the specified salt and the default hash
     ## length and alphabet.
-    
+
     return createHashids(salt, 0, defaultAlphabet)
 
 
-proc createHashids*(): Hashids = 
+proc createHashids*(): Hashids =
     ## Creates and returns a new ``Hashids`` object with an empty string salt and the default hash
     ## length and alphabet.
-    
+
     return createHashids("", 0, defaultAlphabet)
 
 
 proc encode*(hashids: Hashids, numbers: seq[int]): string =
     ## Encodes the specified numbers and returns the encoded string.
-    
+
     if not checkNumberValidity(numbers):
         return ""
     return hashids.encodeHelper(numbers)
@@ -262,7 +262,7 @@ proc encode*(hashids: Hashids, numbers: seq[int]): string =
 proc decode*(hashids: Hashids, hash: string): seq[int] =
     ## Decodes the ``hash`` parameter and returns a
      ## sequence containing the original numbers.
-    
+
     if len(hash) == 0:
         return @[]
     let validChars: string = hashids.alphabet & hashids.guards & hashids.separators
@@ -274,7 +274,7 @@ proc decode*(hashids: Hashids, hash: string): seq[int] =
 
 proc encodeHex*(hashids: Hashids, hexString: string): string =
     ## Encodes the specified hex string and returns the encoded string.
-    ## 
+    ##
     if not hexString.match(re"^[0-9a-fA-F]+$"):
         return ""
 
@@ -284,13 +284,13 @@ proc encodeHex*(hashids: Hashids, hexString: string): string =
     var numbers: seq[int] = @[]
     for component in hexComponents:
         numbers.add(parseHexInt(component))
-    
+
     return hashids.encode(numbers)
 
 
 proc decodeHex*(hashids: Hashids, hash: string): string =
     ## Decodes the ``hash`` parameter and returns the original hex string.
-    
+
     let numbers: seq[int] = hashids.decode(hash)
     var hex: string = ""
 
