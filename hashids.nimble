@@ -1,6 +1,6 @@
 [Package]
 name = "hashids"
-version = "1.1"
+version = "1.2"
 author = "Adam Chesak"
 description = "Nim implementation of Hashids"
 license = "MIT"
